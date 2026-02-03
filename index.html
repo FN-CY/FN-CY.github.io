@@ -2,18 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>范宁：能不能红啊！！！！！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RC理财</title>
     <style>
         :root {
             --bg: #121212;
             --card: #1e1e1e;
             --text: #e0e0e0;
             --text-sub: #757575;
-            --red: #eb4d3d; /* FN红 */
-            --green: #00a854; /* FN绿 */
+            --red: #eb4d3d; 
+            --green: #00a854; 
             --blue: #2196f3;
             --border: #333;
+            --modal-bg: #252525;
         }
 
         body {
@@ -21,93 +22,92 @@
             color: var(--text);
             font-family: -apple-system, "Microsoft YaHei", sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px; /* 手机端边距调小 */
         }
 
-        .container { max-width: 950px; margin: 0 auto; } /*稍微加宽一点适应多一列*/
+        .container { max-width: 950px; margin: 0 auto; padding-bottom: 50px;}
         
         h1 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            color: var(--text);
-            font-weight: bold;
-            letter-spacing: 1px;
+            text-align: center; font-size: 1.5rem; margin-bottom: 20px;
+            color: var(--text); font-weight: bold; letter-spacing: 1px;
         }
 
         /* 顶部看板 */
         .dashboard {
-            background-color: var(--card);
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            background-color: var(--card); border-radius: 10px; padding: 20px;
+            border: 1px solid var(--border); display: flex;
+            justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
+        .dash-item .label { color: var(--text-sub); font-size: 0.85em; margin-bottom: 5px; }
+        .dash-item .val { font-size: 1.6em; font-weight: bold; }
 
-        .dash-item .label { color: var(--text-sub); font-size: 0.9em; margin-bottom: 5px; }
-        .dash-item .val { font-size: 1.8em; font-weight: bold; }
-
-        /* 颜色辅助 */
-        .up { color: var(--red); }
-        .down { color: var(--green); }
-        .gray { color: var(--text-sub); }
+        /* 颜色 */
+        .up { color: var(--red); } .down { color: var(--green); } .gray { color: var(--text-sub); }
 
         /* 输入区 */
         .input-area {
-            background-color: var(--card);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            background-color: var(--card); padding: 15px; border-radius: 10px;
+            margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;
         }
-        
         input {
             background: #2c2c2c; border: 1px solid #444; color: white;
-            padding: 10px; border-radius: 5px; flex: 1; outline: none;
-            min-width: 100px;
+            padding: 10px; border-radius: 5px; flex: 1; outline: none; min-width: 80px;
         }
-        input:focus { border-color: var(--blue); }
-
         button {
-            border: none; padding: 10px 20px; border-radius: 5px; 
-            cursor: pointer; font-weight: bold; color: white;
+            border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;
+            font-weight: bold; color: white; font-size: 0.9em;
         }
         .btn-add { background-color: var(--blue); }
         .btn-refresh { background-color: #333; border: 1px solid #555; }
-        .btn-refresh:hover { background-color: #444; }
 
-        /* 列表 */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; color: var(--text-sub); font-size: 0.9em; padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap;}
-        td { padding: 15px 10px; border-bottom: 1px solid #2a2a2a; font-size: 1em; }
+        /* 表格 */
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; min-width: 600px; }
+        th { text-align: left; color: var(--text-sub); font-size: 0.85em; padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap;}
+        td { padding: 12px 10px; border-bottom: 1px solid #2a2a2a; font-size: 0.95em; }
         
-        .code-pill { 
-            background: #2a2a2a; color: #888; 
-            font-size: 0.75em; padding: 2px 6px; 
-            border-radius: 4px; margin-left: 5px; 
-        }
+        .code-pill { background: #2a2a2a; color: #888; font-size: 0.75em; padding: 2px 5px; border-radius: 4px; display: inline-block; transform: scale(0.9);}
 
-        .del-btn { background: none; color: #666; padding: 5px; }
-        .del-btn:hover { color: var(--red); }
-
-        .tips {
-            margin-top: 30px; padding: 15px; background: #1a1a1a; 
-            color: #666; font-size: 0.85em; line-height: 1.6; border-radius: 8px;
-        }
+        .del-btn { background: none; color: #666; padding: 5px; font-size: 1.2em;}
+        .chart-btn { background: #333; color: #ccc; padding: 4px 8px; font-size: 0.8em; margin-right: 5px; }
+        
+        .tips { margin-top: 20px; padding: 15px; background: #1a1a1a; color: #666; font-size: 0.8em; border-radius: 8px; }
         .tips code { color: #ccc; background: #333; padding: 2px 4px; border-radius: 3px; }
 
-        #networkStatus { font-size: 0.85em; margin-top: 5px; text-align: right; }
+        /* --- 弹窗样式 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 999; display: none;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--modal-bg); width: 95%; max-width: 600px;
+            border-radius: 12px; padding: 15px; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #444;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-title { font-size: 1.1em; font-weight: bold; }
+        .close-modal { background: none; font-size: 1.5em; color: #888; padding: 0; }
+        
+        .chart-tabs { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;}
+        .tab-btn { 
+            background: #333; flex: 1; padding: 8px 0; text-align: center; 
+            border-radius: 4px; font-size: 0.85em; white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--blue); color: white; }
+        
+        .chart-img-container { 
+            background: #fff; border-radius: 4px; padding: 5px; 
+            min-height: 200px; display: flex; justify-content: center; align-items: center;
+        }
+        .chart-img { width: 100%; height: auto; display: block; }
+        .loading-text { color: #333; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>范宁：能不能红啊！！！！！</h1>
+    <h1>RC：给我一直红下去！！！</h1>
 
     <div class="dashboard">
         <div class="dash-item">
@@ -119,43 +119,67 @@
             <div class="val" id="totalProfit">0.00</div>
         </div>
         <div style="text-align: right;">
-            <button class="btn-refresh" onclick="fetchData()">刷新数据</button>
-            <div id="networkStatus" class="gray">等待操作</div>
+            <button class="btn-refresh" onclick="fetchData()">刷新</button>
+            <div id="networkStatus" style="font-size:0.75em; color:#666; margin-top:5px;">准备就绪</div>
         </div>
     </div>
 
     <div class="input-area">
         <input type="text" id="inCode" placeholder="代码 (如 sh600519)">
-        <input type="text" id="inName" placeholder="名称 (如 茅台)">
-        <input type="number" id="inAmt" placeholder="持有金额">
+        <input type="text" id="inName" placeholder="名称">
+        <input type="number" id="inAmt" placeholder="本金">
         <button class="btn-add" onclick="add()">添加</button>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>名称</th>
-                <th>本金</th> <!-- 新增本金列 -->
-                <th>现价</th>
-                <th>涨跌幅</th>
-                <th>今日盈亏</th>
-                <th style="text-align: right;">操作</th>
-            </tr>
-        </thead>
-        <tbody id="list"></tbody>
-    </table>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>本金</th>
+                    <th>现价</th>
+                    <th>涨跌幅</th>
+                    <th>今日盈亏</th>
+                    <th style="text-align: right;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="list"></tbody>
+        </table>
+    </div>
 
     <div class="tips">
-        <strong>⚡ 范宁瞎猜的：</strong><br>
-        1. 沪市(A股/ETF): <code>sh</code> + 代码。例：沪深300 <code>sh000300</code>，茅台 <code>sh600519</code><br>
-        2. 深市(A股/ETF): <code>sz</code> + 代码。例：创业板 <code>sz399006</code>，宁德时代 <code>sz300750</code><br>
-        3. 港股: <code>hk</code> + 代码。例：腾讯 <code>hk00700</code>，美团 <code>hk03690</code><br>
-        4. 美股: <code>us</code> + 代码(大写)+<code>.</code>+代码(大写)。例：特斯拉 <code>usTSLA.TSLA</code>
+        <strong>⚡ FNCY：</strong><br>
+        A股: <code>sh600519</code>, <code>sz300750</code> | 港股: <code>hk00700</code> | 美股: <code>usTSLA.TSLA</code>
+    </div>
+</div>
+
+<!-- 走势图弹窗 -->
+<div class="modal-overlay" id="chartModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">茅台 (600519)</div>
+            <button class="close-modal" onclick="closeChart()">×</button>
+        </div>
+        <div class="chart-tabs">
+            <button class="tab-btn active" onclick="switchChart('min')">今日分时(实时)</button>
+            <button class="tab-btn" onclick="switchChart('daily')">日K (1-3月)</button>
+            <button class="tab-btn" onclick="switchChart('weekly')">周K (1年)</button>
+            <button class="tab-btn" onclick="switchChart('monthly')">月K (3年)</button>
+        </div>
+        <div class="chart-img-container">
+            <img id="chartImg" class="chart-img" src="" alt="走势图">
+        </div>
+        <div style="margin-top:10px; font-size:0.8em; color:#666; text-align:center;">
+            * 图表数据来源：新浪财经
+        </div>
     </div>
 </div>
 
 <script>
     let assets = [];
+    let currentChartCode = '';
+    let currentChartType = '';
+    let chartTimer = null; // 自动刷新图片的定时器
     
     window.onload = () => {
         const local = localStorage.getItem('tencent_fund_v1');
@@ -170,11 +194,7 @@
         const amt = parseFloat(document.getElementById('inAmt').value);
 
         if(!code || !name || isNaN(amt)) return alert("请填全信息");
-        
-        if(!code.startsWith('sh') && !code.startsWith('sz') && !code.startsWith('hk') && !code.startsWith('us')) {
-            alert("代码必须加前缀：sh(沪), sz(深), hk(港), us(美)\n请查看底部说明。");
-            return;
-        }
+        if(!/^(sh|sz|hk|us)/.test(code)) return alert("代码前缀错误，请看底部说明");
 
         assets.push({ id: Date.now(), code, name, amt, price: 0, pct: 0 });
         save(); render(); fetchData();
@@ -185,93 +205,74 @@
     }
 
     function del(id) {
-        assets = assets.filter(a => a.id !== id);
-        save(); render();
+        if(confirm('删除此项?')) {
+            assets = assets.filter(a => a.id !== id);
+            save(); render();
+        }
     }
 
     function save() { localStorage.setItem('tencent_fund_v1', JSON.stringify(assets)); }
 
+    // --- 核心：数据获取 ---
     function fetchData() {
         if(!assets.length) return;
-
         const statusDiv = document.getElementById('networkStatus');
-        statusDiv.innerHTML = "正在连接腾讯云...";
-        statusDiv.style.color = "#2196f3";
-
+        statusDiv.innerHTML = "更新中...";
+        
         const codes = assets.map(a => a.code).join(',');
         const script = document.createElement('script');
         script.charset = "gbk"; 
         script.src = `https://qt.gtimg.cn/q=${codes}&_t=${Date.now()}`;
 
         script.onload = () => {
-            let success = 0;
             assets.forEach(a => {
                 const varName = `v_${a.code.replace(/\./g, '_')}`;
                 const dataStr = window[varName];
-
                 if(dataStr) {
                     const params = dataStr.split('~');
-                    if(params.length > 3) {
-                        let price = 0; 
-                        let pct = 0;
-
-                        if(a.code.startsWith('us')) {
-                            price = parseFloat(params[3]);
-                            pct = parseFloat(params[32]); 
-                        } else if(a.code.startsWith('hk')) {
-                            price = parseFloat(params[3]);
-                            pct = parseFloat(params[32]);
+                    if(params.length > 30) {
+                        if(a.code.startsWith('us')) { // 美股特殊处理
+                            a.price = parseFloat(params[3]);
+                            a.pct = parseFloat(params[32]); 
                         } else {
-                            price = parseFloat(params[3]);
-                            pct = parseFloat(params[32]);
+                            a.price = parseFloat(params[3]);
+                            a.pct = parseFloat(params[32]);
                         }
-                        
-                        a.price = price;
-                        a.pct = pct;
-                        success++;
                     }
                 }
             });
-
             render();
-            statusDiv.innerHTML = `更新成功 ${new Date().toLocaleTimeString()}`;
-            statusDiv.style.color = "#00a854";
-            document.body.removeChild(script);
+            statusDiv.innerHTML = `更新于 ${new Date().toLocaleTimeString()}`;
         };
-
-        script.onerror = () => {
-            statusDiv.innerHTML = "连接被拦截或断开";
-            statusDiv.style.color = "#eb4d3d";
-        };
-
         document.body.appendChild(script);
     }
 
     function render() {
         const list = document.getElementById('list');
         list.innerHTML = '';
-        
-        let totalM = 0;
-        let totalP = 0;
+        let totalM = 0, totalP = 0;
 
         assets.forEach(a => {
             const profit = a.amt * (a.pct / 100);
-            totalM += a.amt;
-            totalP += profit;
-
+            totalM += a.amt; totalP += profit;
+            
             const color = a.pct > 0 ? 'up' : (a.pct < 0 ? 'down' : 'gray');
             const sign = a.pct > 0 ? '+' : '';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
-                    <div>${a.name} <span class="code-pill">${a.code}</span></div>
+                    <div>${a.name}</div>
+                    <div class="code-pill">${a.code}</div>
                 </td>
-                <td>¥${a.amt.toLocaleString()}</td> <!-- 本金列数据 -->
+                <td>¥${a.amt.toLocaleString()}</td>
                 <td>${a.price || '-'}</td>
                 <td class="${color}">${sign}${a.pct.toFixed(2)}%</td>
                 <td class="${color}" style="font-weight:bold">${sign}${profit.toFixed(2)}</td>
-                <td style="text-align: right;"><button class="del-btn" onclick="del(${a.id})">×</button></td>
+                <td style="text-align: right;">
+                    <button class="chart-btn" onclick="openChart('${a.code}', '${a.name}')">📉走势</button>
+                    <button class="del-btn" onclick="del(${a.id})">×</button>
+                </td>
             `;
             list.appendChild(tr);
         });
@@ -281,9 +282,82 @@
         pEl.innerText = (totalP > 0 ? '+' : '') + totalP.toFixed(2);
         pEl.className = 'val ' + (totalP > 0 ? 'up' : (totalP < 0 ? 'down' : 'gray'));
     }
+
+    // --- 图表逻辑 ---
+    
+    // 打开弹窗
+    function openChart(code, name) {
+        currentChartCode = code;
+        document.getElementById('modalTitle').innerText = `${name} (${code})`;
+        document.getElementById('chartModal').style.display = 'flex';
+        switchChart('min'); // 默认看分时
+        
+        // 如果是今日走势，开启定时刷新
+        if(chartTimer) clearInterval(chartTimer);
+        chartTimer = setInterval(() => {
+            if(currentChartType === 'min') updateChartImage();
+        }, 30000); // 30秒刷新一次图
+    }
+
+    // 关闭弹窗
+    function closeChart() {
+        document.getElementById('chartModal').style.display = 'none';
+        if(chartTimer) clearInterval(chartTimer);
+    }
+
+    // 切换周期
+    function switchChart(type) {
+        currentChartType = type;
+        
+        // 按钮样式切换
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active'); // 注意：这里的event是内联调用，如果报错需改写
+        // 修正按钮高亮逻辑
+        const btns = document.querySelectorAll('.tab-btn');
+        if(type === 'min') btns[0].classList.add('active');
+        if(type === 'daily') btns[1].classList.add('active');
+        if(type === 'weekly') btns[2].classList.add('active');
+        if(type === 'monthly') btns[3].classList.add('active');
+
+        updateChartImage();
+    }
+
+    // 获取图片URL逻辑
+    function updateChartImage() {
+        const img = document.getElementById('chartImg');
+        const code = currentChartCode;
+        const type = currentChartType;
+        let url = '';
+
+        // 新浪图片接口规则转换
+        // 腾讯: sh600519 -> 新浪: sh600519
+        // 腾讯: hk00700  -> 新浪: 00700 (路径不同)
+        // 腾讯: usTSLA.TSLA -> 新浪: tsla (路径不同)
+
+        if(code.startsWith('sh') || code.startsWith('sz')) {
+            // A股
+            url = `https://image.sinajs.cn/newchart/${type}/n/${code}.gif`;
+        } else if(code.startsWith('hk')) {
+            // 港股
+            const cleanCode = code.replace('hk', '');
+            url = `https://image.sinajs.cn/newchart/hk/${type}/${cleanCode}.gif`;
+        } else if(code.startsWith('us')) {
+            // 美股 (腾讯 usTSLA.TSLA -> 新浪 tsla)
+            // 提取 us 和 . 之间的部分，或者直接取 . 后面的并转小写
+            let cleanCode = code.split('.')[0].replace('us', '').toLowerCase();
+            url = `https://image.sinajs.cn/newchart/us/${type}/${cleanCode}.gif`;
+        }
+
+        // 加上时间戳防止缓存，实现实时刷新
+        img.src = `${url}?t=${Date.now()}`;
+    }
+
+    // 点击遮罩关闭
+    document.getElementById('chartModal').addEventListener('click', function(e) {
+        if (e.target === this) closeChart();
+    });
+
 </script>
 
 </body>
-
 </html>
-
