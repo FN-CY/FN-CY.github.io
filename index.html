@@ -6,108 +6,92 @@
     <title>RC理财</title>
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --text: #e0e0e0;
-            --text-sub: #757575;
-            --red: #eb4d3d; 
-            --green: #00a854; 
-            --blue: #2196f3;
-            --border: #333;
+            --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --text-sub: #888;
+            --red: #eb4d3d; --green: #00a854; --blue: #2196f3; --border: #333;
             --modal-bg: #252525;
         }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, "Microsoft YaHei", sans-serif;
-            margin: 0;
-            padding: 15px; /* 手机端边距调小 */
-        }
-
-        .container { max-width: 950px; margin: 0 auto; padding-bottom: 50px;}
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, "Microsoft YaHei", sans-serif; margin: 0; padding: 15px; }
+        .container { max-width: 800px; margin: 0 auto; padding-bottom: 80px; }
         
-        h1 {
-            text-align: center; font-size: 1.5rem; margin-bottom: 20px;
-            color: var(--text); font-weight: bold; letter-spacing: 1px;
-        }
+        h1 { text-align: center; font-size: 1.5rem; margin-bottom: 25px; color: var(--text); font-weight: bold; letter-spacing: 1px; }
 
-        /* 顶部看板 */
+        /* 看板 */
         .dashboard {
             background-color: var(--card); border-radius: 10px; padding: 20px;
-            border: 1px solid var(--border); display: flex;
-            justify-content: space-between; align-items: center; margin-bottom: 15px;
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
         .dash-item .label { color: var(--text-sub); font-size: 0.85em; margin-bottom: 5px; }
-        .dash-item .val { font-size: 1.6em; font-weight: bold; }
+        .dash-item .val { font-size: 1.8em; font-weight: bold; }
 
-        /* 颜色 */
         .up { color: var(--red); } .down { color: var(--green); } .gray { color: var(--text-sub); }
 
         /* 输入区 */
-        .input-area {
-            background-color: var(--card); padding: 15px; border-radius: 10px;
-            margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;
+        .input-group {
+            background: var(--card); padding: 15px; border-radius: 10px; border: 1px solid var(--border);
+            display: flex; gap: 10px; margin-bottom: 20px;
         }
         input {
             background: #2c2c2c; border: 1px solid #444; color: white;
-            padding: 10px; border-radius: 5px; flex: 1; outline: none; min-width: 80px;
+            padding: 12px; border-radius: 5px; flex: 1; outline: none; font-size: 1em; width: 100px;
         }
         button {
-            border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;
-            font-weight: bold; color: white; font-size: 0.9em;
+            border: none; padding: 0 15px; border-radius: 5px; cursor: pointer;
+            font-weight: bold; color: white; font-size: 0.9em; white-space: nowrap;
         }
         .btn-add { background-color: var(--blue); }
-        .btn-refresh { background-color: #333; border: 1px solid #555; }
+        .btn-refresh { background-color: #333; border: 1px solid #555; color: #ccc; font-size: 0.8em; padding: 6px 12px; }
 
-        /* 表格 */
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; min-width: 600px; }
-        th { text-align: left; color: var(--text-sub); font-size: 0.85em; padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap;}
-        td { padding: 12px 10px; border-bottom: 1px solid #2a2a2a; font-size: 0.95em; }
-        
-        .code-pill { background: #2a2a2a; color: #888; font-size: 0.75em; padding: 2px 5px; border-radius: 4px; display: inline-block; transform: scale(0.9);}
+        /* 底部条 */
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .status-text { font-size: 0.8em; color: #666; }
 
-        .del-btn { background: none; color: #666; padding: 5px; font-size: 1.2em;}
-        .chart-btn { background: #333; color: #ccc; padding: 4px 8px; font-size: 0.8em; margin-right: 5px; }
+        /* 列表 */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid var(--border); background: var(--card); }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; color: var(--text-sub); font-size: 0.85em; padding: 12px; border-bottom: 1px solid var(--border); white-space: nowrap;}
+        td { padding: 15px 12px; border-bottom: 1px solid #2a2a2a; font-size: 1em; }
         
-        .tips { margin-top: 20px; padding: 15px; background: #1a1a1a; color: #666; font-size: 0.8em; border-radius: 8px; }
-        .tips code { color: #ccc; background: #333; padding: 2px 4px; border-radius: 3px; }
+        .code-tag { background: #2a2a2a; color: #666; font-size: 0.75em; padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+        .time-tag { font-size: 0.75em; color: #555; display: block; margin-top: 4px; }
+
+        /* 按钮 */
+        .btn-del { background: none; color: #666; font-size: 1.5em; padding: 0 5px; line-height: 1; vertical-align: middle;}
+        .btn-del:hover { color: var(--red); }
+        .btn-chart { background: #333; color: #ccc; font-size: 0.8em; padding: 5px 10px; border-radius: 4px; margin-right: 10px; }
 
         /* --- 弹窗样式 --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 999; display: none;
+            background: rgba(0,0,0,0.85); z-index: 999; display: none;
             justify-content: center; align-items: center;
         }
         .modal-content {
             background: var(--modal-bg); width: 95%; max-width: 600px;
-            border-radius: 12px; padding: 15px; position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #444;
+            border-radius: 12px; padding: 15px; position: relative; border: 1px solid #444;
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .modal-title { font-size: 1.1em; font-weight: bold; }
         .close-modal { background: none; font-size: 1.5em; color: #888; padding: 0; }
         
-        .chart-tabs { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;}
+        .chart-tabs { display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { 
             background: #333; flex: 1; padding: 8px 0; text-align: center; 
-            border-radius: 4px; font-size: 0.85em; white-space: nowrap;
+            border-radius: 4px; font-size: 0.8em; white-space: nowrap; color: #ccc;
         }
         .tab-btn.active { background: var(--blue); color: white; }
         
-        .chart-img-container { 
+        .chart-box { 
             background: #fff; border-radius: 4px; padding: 5px; 
             min-height: 200px; display: flex; justify-content: center; align-items: center;
         }
         .chart-img { width: 100%; height: auto; display: block; }
-        .loading-text { color: #333; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>RC：给我一直红下去！！！</h1>
+    <h1>小🐷理财（●'◡'●！）</h1>
 
     <div class="dashboard">
         <div class="dash-item">
@@ -115,41 +99,41 @@
             <div class="val" id="totalMoney">0.00</div>
         </div>
         <div class="dash-item">
-            <div class="label">今日盈亏</div>
+            <div class="label">今日预估盈亏</div>
             <div class="val" id="totalProfit">0.00</div>
         </div>
-        <div style="text-align: right;">
-            <button class="btn-refresh" onclick="fetchData()">刷新</button>
-            <div id="networkStatus" style="font-size:0.75em; color:#666; margin-top:5px;">准备就绪</div>
-        </div>
     </div>
 
-    <div class="input-area">
-        <input type="text" id="inCode" placeholder="代码 (如 sh600519)">
-        <input type="text" id="inName" placeholder="名称">
-        <input type="number" id="inAmt" placeholder="本金">
-        <button class="btn-add" onclick="add()">添加</button>
+    <div class="action-bar">
+        <div class="status-text" id="statusMsg">准备就绪</div>
+        <button class="btn-refresh" onclick="refreshAll()">↻ 立即刷新</button>
     </div>
 
-    <div class="table-wrapper">
+    <div class="input-group">
+        <input type="tel" id="inCode" placeholder="基金代码 (6位)" maxlength="6">
+        <input type="number" id="inAmt" placeholder="投入本金">
+        <button class="btn-add" onclick="addFund()">添加</button>
+    </div>
+
+    <div class="table-wrap">
         <table>
             <thead>
                 <tr>
-                    <th>名称</th>
+                    <th>基金名称</th>
                     <th>本金</th>
-                    <th>现价</th>
-                    <th>涨跌幅</th>
-                    <th>今日盈亏</th>
+                    <th>实时估值</th>
+                    <th>预估盈亏</th>
                     <th style="text-align: right;">操作</th>
                 </tr>
             </thead>
-            <tbody id="list"></tbody>
+            <tbody id="listBody"></tbody>
         </table>
     </div>
-
-    <div class="tips">
-        <strong>⚡ FNCY：</strong><br>
-        A股: <code>sh600519</code>, <code>sz300750</code> | 港股: <code>hk00700</code> | 美股: <code>usTSLA.TSLA</code>
+    
+    <div style="margin-top:20px; font-size:0.8em; color:#555; text-align:center; line-height: 1.6;">
+        *小🐷:数据仅供参考！该涨还是得涨
+        * 数据源：Official Real-time Valuation API(JSONP)<br>
+        * 走势图数据来源：Tiantian Fund (Eastmoney)
     </div>
 </div>
 
@@ -157,124 +141,132 @@
 <div class="modal-overlay" id="chartModal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title" id="modalTitle">茅台 (600519)</div>
+            <div class="modal-title" id="modalTitle">基金走势</div>
             <button class="close-modal" onclick="closeChart()">×</button>
         </div>
         <div class="chart-tabs">
-            <button class="tab-btn active" onclick="switchChart('min')">今日分时(实时)</button>
-            <button class="tab-btn" onclick="switchChart('daily')">日K (1-3月)</button>
-            <button class="tab-btn" onclick="switchChart('weekly')">周K (1年)</button>
-            <button class="tab-btn" onclick="switchChart('monthly')">月K (3年)</button>
+            <button class="tab-btn active" onclick="switchChart('today')">今日估值</button>
+            <button class="tab-btn" onclick="switchChart('1m')">1个月</button>
+            <button class="tab-btn" onclick="switchChart('3m')">3个月</button>
+            <button class="tab-btn" onclick="switchChart('6m')">半年</button>
+            <button class="tab-btn" onclick="switchChart('1y')">1年</button>
+            <button class="tab-btn" onclick="switchChart('3y')">3年</button>
         </div>
-        <div class="chart-img-container">
-            <img id="chartImg" class="chart-img" src="" alt="走势图">
+        <div class="chart-box">
+            <img id="chartImg" class="chart-img" src="" alt="加载中...">
         </div>
-        <div style="margin-top:10px; font-size:0.8em; color:#666; text-align:center;">
-            * 图表数据来源：Sina Finance（FN:仅供参考）
+        <div style="margin-top:10px; font-size:0.75em; color:#666; text-align:center;">
+            * FN:图标有延迟，今日图表需今日数据更新后可查看
         </div>
     </div>
 </div>
 
 <script>
-    let assets = [];
-    let currentChartCode = '';
-    let currentChartType = '';
-    let chartTimer = null; // 自动刷新图片的定时器
+    let myFunds = [];
+    const BASE_URL = "https://fundgz.1234567.com.cn/js/";
     
+    // 图表相关变量
+    let currentChartCode = '';
+    let chartTimer = null;
+
     window.onload = () => {
-        const local = localStorage.getItem('tencent_fund_v1');
-        if(local) assets = JSON.parse(local);
+        const saved = localStorage.getItem('fn_stable_funds');
+        if (saved) myFunds = JSON.parse(saved);
         render();
-        if(assets.length) fetchData();
+        if (myFunds.length > 0) refreshAll();
+        setInterval(refreshAll, 30000); // 30秒刷新数据
     };
 
-    function add() {
+    // 1. 添加基金
+    function addFund() {
         const code = document.getElementById('inCode').value.trim();
-        const name = document.getElementById('inName').value.trim();
         const amt = parseFloat(document.getElementById('inAmt').value);
 
-        if(!code || !name || isNaN(amt)) return alert("请填全信息");
-        if(!/^(sh|sz|hk|us)/.test(code)) return alert("代码前缀错误，请看底部说明");
+        if (!code || code.length !== 6 || isNaN(amt)) return alert("请输入6位代码和本金");
+        
+        const newFund = {
+            id: Date.now(),
+            code: code,
+            name: "加载中...", 
+            amt: amt,
+            gszzl: 0, 
+            time: "--:--"
+        };
 
-        assets.push({ id: Date.now(), code, name, amt, price: 0, pct: 0 });
-        save(); render(); fetchData();
+        myFunds.push(newFund);
+        save(); render(); refreshAll();
         
         document.getElementById('inCode').value = '';
-        document.getElementById('inName').value = '';
         document.getElementById('inAmt').value = '';
     }
 
-    function del(id) {
-        if(confirm('删除此项?')) {
-            assets = assets.filter(a => a.id !== id);
-            save(); render();
+    // 2. 刷新估值 (JSONP)
+    function refreshAll() {
+        if (myFunds.length === 0) return;
+        const statusEl = document.getElementById('statusMsg');
+        statusEl.innerText = "正在同步数据...";
+        statusEl.style.color = "#2196f3";
+
+        let completed = 0;
+        myFunds.forEach(fund => {
+            const script = document.createElement('script');
+            script.src = `${BASE_URL}${fund.code}.js?rt=${Date.now()}`;
+            
+            window.jsonpgz = function(data) {
+                if(data.fundcode === fund.code) {
+                    fund.name = data.name; 
+                    fund.gszzl = parseFloat(data.gszzl);
+                    fund.time = data.gztime;
+                }
+            };
+
+            script.onload = () => { completed++; checkDone(); };
+            script.onerror = () => { completed++; checkDone(); }; // 忽略错误
+            
+            document.body.appendChild(script);
+            setTimeout(() => { if(script.parentNode) script.parentNode.removeChild(script); }, 2000);
+        });
+
+        function checkDone() {
+            if(completed >= myFunds.length) {
+                save(); render();
+                statusEl.innerText = "更新成功 " + new Date().toLocaleTimeString();
+                statusEl.style.color = "#00a854";
+            }
         }
     }
 
-    function save() { localStorage.setItem('tencent_fund_v1', JSON.stringify(assets)); }
-
-    // --- 核心：数据获取 ---
-    function fetchData() {
-        if(!assets.length) return;
-        const statusDiv = document.getElementById('networkStatus');
-        statusDiv.innerHTML = "更新中...";
-        
-        const codes = assets.map(a => a.code).join(',');
-        const script = document.createElement('script');
-        script.charset = "gbk"; 
-        script.src = `https://qt.gtimg.cn/q=${codes}&_t=${Date.now()}`;
-
-        script.onload = () => {
-            assets.forEach(a => {
-                const varName = `v_${a.code.replace(/\./g, '_')}`;
-                const dataStr = window[varName];
-                if(dataStr) {
-                    const params = dataStr.split('~');
-                    if(params.length > 30) {
-                        if(a.code.startsWith('us')) { // 美股特殊处理
-                            a.price = parseFloat(params[3]);
-                            a.pct = parseFloat(params[32]); 
-                        } else {
-                            a.price = parseFloat(params[3]);
-                            a.pct = parseFloat(params[32]);
-                        }
-                    }
-                }
-            });
-            render();
-            statusDiv.innerHTML = `更新于 ${new Date().toLocaleTimeString()}`;
-        };
-        document.body.appendChild(script);
-    }
-
+    // 3. 渲染列表
     function render() {
-        const list = document.getElementById('list');
-        list.innerHTML = '';
+        const tbody = document.getElementById('listBody');
+        tbody.innerHTML = '';
         let totalM = 0, totalP = 0;
 
-        assets.forEach(a => {
-            const profit = a.amt * (a.pct / 100);
-            totalM += a.amt; totalP += profit;
+        myFunds.forEach(f => {
+            const profit = f.amt * (f.gszzl / 100);
+            totalM += f.amt; totalP += profit;
             
-            const color = a.pct > 0 ? 'up' : (a.pct < 0 ? 'down' : 'gray');
-            const sign = a.pct > 0 ? '+' : '';
+            const color = f.gszzl > 0 ? 'up' : (f.gszzl < 0 ? 'down' : 'gray');
+            const sign = f.gszzl > 0 ? '+' : '';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
-                    <div>${a.name}</div>
-                    <div class="code-pill">${a.code}</div>
+                    <div>${f.name}</div>
+                    <span class="code-tag">${f.code}</span>
                 </td>
-                <td>¥${a.amt.toLocaleString()}</td>
-                <td>${a.price || '-'}</td>
-                <td class="${color}">${sign}${a.pct.toFixed(2)}%</td>
-                <td class="${color}" style="font-weight:bold">${sign}${profit.toFixed(2)}</td>
+                <td>¥${f.amt.toLocaleString()}</td>
+                <td>
+                    <span class="${color}" style="font-weight:bold">${sign}${f.gszzl}%</span>
+                    <span class="time-tag">${f.time}</span>
+                </td>
+                <td class="${color}">${sign}${profit.toFixed(2)}</td>
                 <td style="text-align: right;">
-                    <button class="chart-btn" onclick="openChart('${a.code}', '${a.name}')">📉走势</button>
-                    <button class="del-btn" onclick="del(${a.id})">×</button>
+                    <button class="btn-chart" onclick="openChart('${f.code}', '${f.name}')">📉走势</button>
+                    <button class="btn-del" onclick="del(${f.id})">×</button>
                 </td>
             `;
-            list.appendChild(tr);
+            tbody.appendChild(tr);
         });
 
         document.getElementById('totalMoney').innerText = totalM.toLocaleString();
@@ -283,82 +275,72 @@
         pEl.className = 'val ' + (totalP > 0 ? 'up' : (totalP < 0 ? 'down' : 'gray'));
     }
 
+    function del(id) {
+        if(confirm('删除?')) { myFunds = myFunds.filter(f => f.id !== id); save(); render(); }
+    }
+    function save() { localStorage.setItem('fn_stable_funds', JSON.stringify(myFunds)); }
+
     // --- 图表逻辑 ---
-    
-    // 打开弹窗
+
     function openChart(code, name) {
         currentChartCode = code;
-        document.getElementById('modalTitle').innerText = `${name} (${code})`;
+        document.getElementById('modalTitle').innerText = name;
         document.getElementById('chartModal').style.display = 'flex';
-        switchChart('min'); // 默认看分时
-        
-        // 如果是今日走势，开启定时刷新
-        if(chartTimer) clearInterval(chartTimer);
-        chartTimer = setInterval(() => {
-            if(currentChartType === 'min') updateChartImage();
-        }, 30000); // 30秒刷新一次图
+        switchChart('today'); // 默认显示今日
     }
 
-    // 关闭弹窗
     function closeChart() {
         document.getElementById('chartModal').style.display = 'none';
         if(chartTimer) clearInterval(chartTimer);
     }
 
-    // 切换周期
     function switchChart(type) {
-        currentChartType = type;
-        
-        // 按钮样式切换
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active'); // 注意：这里的event是内联调用，如果报错需改写
-        // 修正按钮高亮逻辑
+        // 按钮样式
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        // 简单查找对应按钮高亮（通过文本判断不太严谨但简单）
         const btns = document.querySelectorAll('.tab-btn');
-        if(type === 'min') btns[0].classList.add('active');
-        if(type === 'daily') btns[1].classList.add('active');
-        if(type === 'weekly') btns[2].classList.add('active');
-        if(type === 'monthly') btns[3].classList.add('active');
+        if(type === 'today') btns[0].classList.add('active');
+        if(type === '1m') btns[1].classList.add('active');
+        if(type === '3m') btns[2].classList.add('active');
+        if(type === '6m') btns[3].classList.add('active');
+        if(type === '1y') btns[4].classList.add('active');
+        if(type === '3y') btns[5].classList.add('active');
 
-        updateChartImage();
-    }
-
-    // 获取图片URL逻辑
-    function updateChartImage() {
+        // 设置图片源
         const img = document.getElementById('chartImg');
-        const code = currentChartCode;
-        const type = currentChartType;
+        const ts = Date.now();
         let url = '';
 
-        // 新浪图片接口规则转换
-        // 腾讯: sh600519 -> 新浪: sh600519
-        // 腾讯: hk00700  -> 新浪: 00700 (路径不同)
-        // 腾讯: usTSLA.TSLA -> 新浪: tsla (路径不同)
-
-        if(code.startsWith('sh') || code.startsWith('sz')) {
-            // A股
-            url = `https://image.sinajs.cn/newchart/${type}/n/${code}.gif`;
-        } else if(code.startsWith('hk')) {
-            // 港股
-            const cleanCode = code.replace('hk', '');
-            url = `https://image.sinajs.cn/newchart/hk/${type}/${cleanCode}.gif`;
-        } else if(code.startsWith('us')) {
-            // 美股 (腾讯 usTSLA.TSLA -> 新浪 tsla)
-            // 提取 us 和 . 之间的部分，或者直接取 . 后面的并转小写
-            let cleanCode = code.split('.')[0].replace('us', '').toLowerCase();
-            url = `https://image.sinajs.cn/newchart/us/${type}/${cleanCode}.gif`;
+        // 天天基金官方图片接口
+        if (type === 'today') {
+            // 今日实时估值走势
+            url = `https://j4.dfcfw.com/charts/pic/${currentChartCode}.png?v=${ts}`;
+            // 开启自动刷新 (仅今日图)
+            if(chartTimer) clearInterval(chartTimer);
+            chartTimer = setInterval(() => {
+                img.src = `https://j4.dfcfw.com/charts/pic/${currentChartCode}.png?v=${Date.now()}`;
+            }, 30000);
+        } else {
+            // 历史净值走势
+            if(chartTimer) clearInterval(chartTimer);
+            let pType = 1;
+            if(type === '1m') pType = 1;
+            if(type === '3m') pType = 2;
+            if(type === '6m') pType = 3;
+            if(type === '1y') pType = 4;
+            if(type === '3y') pType = 5;
+            
+            url = `https://j3.dfcfw.com/images/JJJZ${pType}/${currentChartCode}.png?v=${ts}`;
         }
-
-        // 加上时间戳防止缓存，实现实时刷新
-        img.src = `${url}?t=${Date.now()}`;
+        
+        img.src = url;
     }
-
-    // 点击遮罩关闭
-    document.getElementById('chartModal').addEventListener('click', function(e) {
-        if (e.target === this) closeChart();
+    
+    // 点击背景关闭弹窗
+    document.getElementById('chartModal').addEventListener('click', function(e){
+        if(e.target === this) closeChart();
     });
 
 </script>
-
 </body>
 </html>
-
