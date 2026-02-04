@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小🐷理财（●'◡'●！） (文本解析版)</title>
+    <title>小🐷理财</title>
     <style>
         :root {
             --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --text-sub: #888;
@@ -76,7 +76,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>小🐷理财</h1>
+        <h1>小🐷理财(●'◡'●)！</h1>
         <button class="data-btn" onclick="openDataModal()">📂 备份/导入</button>
     </div>
 
@@ -119,8 +119,8 @@
     
     <div style="margin-top:20px; font-size:0.8em; color:#555; text-align:center; padding:10px; background:#191919; border-radius:8px;">
         ⚠️ <strong>提示：</strong><br>
-        小🐷理财提醒您：投资有风险，理财需谨慎。<br>
-        小🐷理财坚信，阳光总在风雨后🌈
+        小🐷理财提醒您：投资有风险，买入需谨慎！<br>
+        小🐷理财坚信：阳光总在风雨后🌈——风浪越大，鱼越贵🐟
     </div>
 </div>
 
@@ -152,19 +152,14 @@
             <div class="modal-title">数据管理</div>
             <button class="close-modal" onclick="closeDataModal()">×</button>
         </div>
-        <textarea id="dataArea" class="data-area" placeholder="在此处粘贴：\n1. 之前导出的备份数据\n2. 或者直接粘贴从基金软件里复制的文字..."></textarea>
+        <textarea id="dataArea" class="data-area" placeholder="请在此处粘贴基金软件复制的文字..."></textarea>
         
         <div class="data-actions">
             <button class="btn-action btn-backup" onclick="exportData()">复制导出 (备份)</button>
-            <button class="btn-action btn-paste" onclick="importFromText()">📋 智能文本导入</button>
-            <button class="btn-action btn-restore" onclick="importJson()">恢复备份数据</button>
+            <button class="btn-action btn-paste" onclick="importFromText()">📋 粘贴文本导入</button>
         </div>
-        
-        <div style="margin-top:15px; font-size:0.85em; color:#888; line-height:1.6; border-top: 1px solid #444; padding-top:10px;">
-            <strong>🚀 如何使用智能文本导入：</strong><br>
-            1. 在您的基金软件页面，<strong>全选复制</strong>所有文字。<br>
-            2. 粘贴到上方框内，点击“智能文本导入”。<br>
-            3. 系统会自动提取代码和金额（100%准确，无视字体大小）。
+        <div style="margin-top:10px; font-size:0.8em; color:#888;">
+            * 推荐使用“粘贴文本导入”，可一次性解析多个基金，无视加载问题。
         </div>
     </div>
 </div>
@@ -182,57 +177,62 @@
     window.onload = () => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) myFunds = JSON.parse(saved);
+        
+        // 定义全局回调函数 (解决批量导入时的并发覆盖问题)
+        window.jsonpgz = function(data) {
+            // 收到数据后，遍历列表找到对应的基金并更新
+            // 注意：data.fundcode 是字符串，myFunds里的code也是字符串
+            const target = myFunds.find(f => f.code === data.fundcode);
+            if(target) {
+                target.name = data.name;
+                target.gszzl = parseFloat(data.gszzl);
+                target.time = data.gztime;
+                target.useSilver = false;
+                
+                // 白银逻辑
+                if(target.isSilver && latestSilverData.ready) {
+                    target.gszzl = latestSilverData.pct;
+                    target.time = latestSilverData.time;
+                    target.useSilver = true;
+                }
+                
+                // 收到一个更新一个，避免等待
+                save();
+                render();
+            }
+        };
+
         render();
         if (myFunds.length > 0) refreshAll();
         setInterval(refreshAll, 45000);
     };
 
-    // --- 智能文本解析引擎 (核心升级) ---
+    // --- 文本导入逻辑 ---
     function importFromText() {
         const text = document.getElementById('dataArea').value;
         if(!text.trim()) return alert("请先粘贴文字");
-
-        // 1. 预处理：移除 ¥ , 等干扰符号，将连续空白转为单空格
         const cleanText = text.replace(/¥/g, '').replace(/,/g, '').replace(/\s+/g, ' ');
-        
-        // 2. 匹配逻辑：寻找 6 位代码，以及紧随其后的数字
-        // 匹配模式：(代码) ... (数字)
-        // 很多网页复制出来的格式是： 基金名 016708 ... 2000.00 ...
-        const regex = /(\d{6})(.*?)(\d+(\.\d+)?)/g;
-        
-        let newItems = [];
-        let match;
-
-        // 我们使用更灵活的扫描方式
-        // 先把所有“单词”拆开
+        // 匹配逻辑: 代码(6位) + 任意字符 + 金额
         const tokens = cleanText.split(' ');
+        let newItems = [];
         
         for(let i=0; i<tokens.length; i++) {
             const token = tokens[i];
-            
-            // 如果找到代码
             if(/^\d{6}$/.test(token)) {
                 const code = token;
-                
-                // 往后找金额 (往后找5个词以内)
                 let amt = 0;
+                // 向后找金额
                 for(let j=1; j<=5; j++) {
                     if(i+j >= tokens.length) break;
-                    
-                    const nextVal = parseFloat(tokens[i+j]);
-                    if(!isNaN(nextVal)) {
-                        // 排除年份 2024-2030, 排除过小的数字(可能是涨跌幅 0.xx, 3.xx)
-                        // 本金一般大于 50
-                        if(nextVal > 50 && (nextVal < 2020 || nextVal > 2030)) {
-                            amt = nextVal;
-                            break; // 找到即止
-                        }
+                    const val = parseFloat(tokens[i+j]);
+                    if(!isNaN(val) && val > 50 && (val < 2020 || val > 2030)) {
+                        amt = val;
+                        break;
                     }
                 }
-                
                 if(amt > 0) {
-                    const exists = myFunds.some(f => f.code === code) || newItems.some(f => f.code === code);
-                    if(!exists) {
+                    // 去重
+                    if(!myFunds.some(f=>f.code===code) && !newItems.some(f=>f.code===code)) {
                         newItems.push({
                             id: Date.now() + Math.random(),
                             code: code,
@@ -247,81 +247,48 @@
         }
 
         if(newItems.length > 0) {
-            if(confirm(`解析成功！\n识别出 ${newItems.length} 个基金。\n\n代码示例: ${newItems[0].code}\n金额示例: ${newItems[0].amt}\n\n是否导入？`)) {
-                myFunds = [...myFunds, ...newItems];
-                save(); render(); refreshAll(); closeDataModal();
-            }
+            myFunds = [...myFunds, ...newItems];
+            save(); render(); closeDataModal();
+            // 重点：导入后立即刷新，因为有了全局回调，这次不会卡死了
+            refreshAll(); 
+            alert(`成功导入 ${newItems.length} 个基金，正在获取数据...`);
         } else {
-            alert("未能识别出数据。\n请确保粘贴了包含“6位代码”和“金额”的文字。");
+            alert("未识别到数据，请确保复制了代码和金额");
         }
     }
 
-    // --- 数据管理通用 ---
-    function openDataModal() { document.getElementById('dataArea').value = ''; document.getElementById('dataModal').style.display = 'flex'; }
-    function closeDataModal() { document.getElementById('dataModal').style.display = 'none'; }
-    
-    function exportData() {
-        if(myFunds.length === 0) return alert("无数据");
-        const json = JSON.stringify(myFunds);
-        document.getElementById('dataArea').value = json;
-        document.getElementById('dataArea').select();
-        document.execCommand('copy');
-        alert("已复制备份数据");
-    }
-    
-    function importJson() {
-        const json = document.getElementById('dataArea').value.trim();
-        if(!json) return alert("请先粘贴备份数据");
-        try {
-            const parsed = JSON.parse(json);
-            if(Array.isArray(parsed)) {
-                if(confirm(`确定覆盖当前列表吗？`)) { myFunds = parsed; save(); render(); refreshAll(); closeDataModal(); }
-            }
-        } catch(e) { alert("数据格式错误，请检查是否是合法的备份JSON"); }
-    }
-
-    // --- 业务逻辑 (不变) ---
-    function addFund() {
-        const code = document.getElementById('inCode').value.trim();
-        const amt = parseFloat(document.getElementById('inAmt').value);
-        if (!code || code.length !== 6 || isNaN(amt)) return alert("输入错误");
-        myFunds.push({
-            id: Date.now(), code: code, name: "加载中...", amt: amt,
-            gszzl: 0, time: "--:--", isSilver: SILVER_FUNDS.includes(code)
-        });
-        save(); render(); refreshAll();
-        document.getElementById('inCode').value = ''; document.getElementById('inAmt').value = '';
-    }
+    // --- 核心刷新逻辑 (修复版) ---
     async function refreshAll() {
         if (myFunds.length === 0) return;
         const statusEl = document.getElementById('statusMsg');
+        
+        // 1. 先拿白银
         if(myFunds.some(f => f.isSilver)) {
             statusEl.innerText = "正在获取国际银价..."; statusEl.style.color = "#00d2ff";
             await fetchSilverPrice();
         }
+
         statusEl.innerText = "正在同步基金净值..."; statusEl.style.color = "#2196f3";
-        let completed = 0;
+
+        // 2. 批量发出请求
+        // 关键修改：不再在循环里定义 window.jsonpgz，而是使用 window.onload 里定义的全局回调
         myFunds.forEach(fund => {
             const script = document.createElement('script');
             script.src = `${BASE_URL}${fund.code}.js?rt=${Date.now()}`;
-            window.jsonpgz = function(data) {
-                if(data.fundcode === fund.code) {
-                    fund.name = data.name; fund.gszzl = parseFloat(data.gszzl);
-                    fund.time = data.gztime; fund.useSilver = false;
-                    if(fund.isSilver && latestSilverData.ready) {
-                        fund.gszzl = latestSilverData.pct; fund.time = latestSilverData.time; fund.useSilver = true;
-                    }
-                }
-            };
-            script.onload = () => { completed++; checkDone(); };
-            script.onerror = () => { completed++; checkDone(); };
+            script.onerror = () => { console.log("加载失败: " + fund.code); }; 
             document.body.appendChild(script);
-            setTimeout(() => { if(script.parentNode) script.parentNode.removeChild(script); }, 2000);
+            
+            // 清理标签
+            setTimeout(() => { if(script.parentNode) script.parentNode.removeChild(script); }, 5000);
         });
-        function checkDone() {
-            if(completed >= myFunds.length) { save(); render(); statusEl.innerText = "更新成功 " + new Date().toLocaleTimeString(); statusEl.style.color = "#00a854"; }
-        }
+        
+        // 这里的“更新成功”只是表示请求发完了，具体数据更新由 jsonpgz 回调处理
+        setTimeout(() => {
+             statusEl.innerText = "同步请求已发送 " + new Date().toLocaleTimeString();
+             statusEl.style.color = "#00a854";
+        }, 1000);
     }
+
     function fetchSilverPrice() {
         return new Promise((resolve) => {
             const script = document.createElement('script');
@@ -347,6 +314,31 @@
             document.body.appendChild(script);
         });
     }
+
+    // --- 基础功能 ---
+    function openDataModal() { document.getElementById('dataArea').value = ''; document.getElementById('dataModal').style.display = 'flex'; }
+    function closeDataModal() { document.getElementById('dataModal').style.display = 'none'; }
+    function exportData() {
+        if(myFunds.length === 0) return alert("无数据");
+        const json = JSON.stringify(myFunds);
+        document.getElementById('dataArea').value = json;
+        document.getElementById('dataArea').select();
+        document.execCommand('copy');
+        alert("已复制备份数据");
+    }
+    
+    function addFund() {
+        const code = document.getElementById('inCode').value.trim();
+        const amt = parseFloat(document.getElementById('inAmt').value);
+        if (!code || code.length !== 6 || isNaN(amt)) return alert("输入错误");
+        myFunds.push({
+            id: Date.now(), code: code, name: "加载中...", amt: amt,
+            gszzl: 0, time: "--:--", isSilver: SILVER_FUNDS.includes(code)
+        });
+        save(); render(); refreshAll();
+        document.getElementById('inCode').value = ''; document.getElementById('inAmt').value = '';
+    }
+
     function render() {
         const tbody = document.getElementById('listBody'); tbody.innerHTML = '';
         let totalM = 0, totalP = 0;
@@ -372,8 +364,10 @@
         pEl.innerText = (totalP > 0 ? '+' : '') + totalP.toFixed(2);
         pEl.className = 'val ' + (totalP > 0 ? 'up' : (totalP < 0 ? 'down' : 'gray'));
     }
+
     function del(id) { if(confirm('删除?')) { myFunds = myFunds.filter(f => f.id !== id); save(); render(); } }
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(myFunds)); }
+    
     function openChart(code, name) { currentChartCode = code; document.getElementById('modalTitle').innerText = name; document.getElementById('chartModal').style.display = 'flex'; switchChart('today'); }
     function closeChart() { document.getElementById('chartModal').style.display = 'none'; if(chartTimer) clearInterval(chartTimer); }
     function switchChart(type) {
@@ -395,4 +389,3 @@
 </script>
 </body>
 </html>
-
